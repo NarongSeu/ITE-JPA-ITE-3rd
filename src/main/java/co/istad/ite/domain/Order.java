@@ -20,7 +20,6 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID Id;
-
     @Column(nullable = false)
     private String customerId;
     @Column(nullable = false)

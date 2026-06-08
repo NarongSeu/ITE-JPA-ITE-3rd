@@ -28,6 +28,7 @@ public class OrderLine {
 
     @Column(nullable = false)
     private Integer qty;
+
     @Column(nullable = false)
     private BigDecimal unitPrice;
 }

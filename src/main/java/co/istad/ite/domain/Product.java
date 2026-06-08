@@ -34,18 +34,21 @@ public class Product {
 
     @Column(nullable = false,  unique = true)
     private String slug;
+
     @Column(nullable = false)
     private String thumbnail;
+
     @Column(nullable = false)
     private BigDecimal unitPrice;
+
     @Column(nullable = false)
     private Integer qty;
 
     @Column(nullable = false)
     private Boolean isAvailable;
+
     @Column(nullable = false)
     private Boolean isDelete;
-
 
     @ManyToOne
     private Category category;
