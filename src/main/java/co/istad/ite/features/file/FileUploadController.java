@@ -4,6 +4,8 @@ import co.istad.ite.features.file.dto.FileUploadResponse;
 import co.istad.ite.features.file.dto.MultipleFileUploadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,22 @@ import java.util.List;
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
 public class FileUploadController {
+
+    private final FileUplaodRepository fileUplaodRepository;
+
+
+    @GetMapping("/{name}")
+    public FileUploadResponse findByName(@PathVariable String name) {
+        return fileUploadService.findByName(name);
+    }
+
+    @GetMapping
+    public Page<FileUploadResponse> findAll(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize
+    ) {
+        return fileUploadService.findAll(pageNumber, pageSize);
+    }
 
     private final FileUploadService fileUploadService;
     @ResponseStatus(HttpStatus.CREATED)

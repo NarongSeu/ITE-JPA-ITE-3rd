@@ -10,6 +10,7 @@ public record FileUploadResponse(
         String mediaType,
         String message,
         String status,
+        String extension,
         //http://localhost:9990/file/istad.png
         String uri
 

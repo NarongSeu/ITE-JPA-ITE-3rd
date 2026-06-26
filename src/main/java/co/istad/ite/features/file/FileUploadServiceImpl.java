@@ -4,6 +4,10 @@ import co.istad.ite.features.file.dto.FileUploadResponse;
 import co.istad.ite.features.file.dto.MultipleFileUploadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,13 +26,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileUploadServiceImpl implements FileUploadService {
 
+    private final FileUploadMapper  fileUploadMapper;
+    private final FileUplaodRepository fileUploadRepository;
     @Value("${file.storage-location}")
     private String storageLocation;
-
-    @Value("${file.base-uri}")
-    private String baseUri;
-
-
     @Override
     public FileUploadResponse upload(MultipartFile file) {
 
@@ -40,10 +41,8 @@ public class FileUploadServiceImpl implements FileUploadService {
         String ext = file.getOriginalFilename()
                 .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
 
-        name += "." + ext; // new-unique-filename.ext
-
         // Create absolute path to store file
-        Path path = Paths.get(storageLocation + name);
+        Path path = Paths.get(storageLocation + name + "." + ext);
 
         try {
             Files.copy(file.getInputStream(), path);
@@ -52,12 +51,22 @@ public class FileUploadServiceImpl implements FileUploadService {
                     "File has been failed to upload");
         }
 
-        return FileUploadResponse.builder()
-                .name(name)
-                .size(file.getSize())
-                .mediaType(file.getContentType())
-                .uri(baseUri + name)
-                .build();
+        FileUpload fileUpload = new FileUpload();
+        fileUpload.setName(name);
+        fileUpload.setCaption("File Upload");
+        fileUpload.setExtension(ext);
+        fileUpload.setSize(file.getSize());
+        fileUpload.setMediaType(file.getContentType());
+        fileUploadRepository.save(fileUpload);
+
+//        return FileUploadResponse.builder()
+//                .name(name)
+//                .extension(fileUpload.getExtension())
+//                .size(file.getSize())
+//                .mediaType(file.getContentType())
+//                .uri(baseUri + fileUpload.getName() +"."+ fileUpload.getExtension())
+//                .build();
+        return fileUploadMapper.mapFileUploadToFileUploadResponse(fileUpload);
     }
 
     @Override
@@ -75,7 +84,6 @@ public class FileUploadServiceImpl implements FileUploadService {
                     errorCount++;
                     continue;
                 }
-
                 // Upload the file using existing upload method
                 FileUploadResponse response = upload(file);
                 uploadedFiles.add(response);
@@ -98,6 +106,24 @@ public class FileUploadServiceImpl implements FileUploadService {
                 .timestamp(LocalDateTime.now())
                 .build();
     }
+
+    @Override
+    public FileUploadResponse findByName(String name) {
+        return fileUploadRepository.findByName(name)
+                .map(fileUploadMapper::mapFileUploadToFileUploadResponse)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "File has not been found"));
+    }
+
+    @Override
+    public Page<FileUploadResponse> findAll(int pageNumber, int pageSize) {
+
+        Sort sortById = Sort.by(Sort.Direction.DESC, "id");
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sortById);
+        Page<FileUpload> fileUplaodResponse = fileUploadRepository.findAll(pageRequest);
+
+        return fileUplaodResponse.map(fileUploadMapper::mapFileUploadToFileUploadResponse);
+    }
+
 
     @Override
     public FileDeleteResponse fileDelete(String fileName) {
