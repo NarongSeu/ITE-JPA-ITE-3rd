@@ -37,7 +37,7 @@ public class Order {
     @Column(nullable = false)
     private Boolean isDelete;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLine> orderLines;
 
 }
