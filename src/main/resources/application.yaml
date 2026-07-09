@@ -4,6 +4,11 @@ file:
   base-uri: http://localhost:${server.port}${file.client-path}/
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9998/realms/devsolve-api
   jpa:
     hibernate:
       ddl-auto: update
@@ -29,3 +34,10 @@ spring:
 
 server:
   port: 7777
+
+keycloak:
+  server-url: http://localhost:9998
+  realm: master
+  target-realm: devsolve-api
+  client-id: devsovle-api-ite
+  client-secret: YEaNg68u6FWguN4B1uwlWyjZa5fl5ga6

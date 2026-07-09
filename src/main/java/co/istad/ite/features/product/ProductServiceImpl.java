@@ -4,17 +4,17 @@ import co.istad.ite.features.category.Category;
 import co.istad.ite.features.category.CategoryRepository;
 import co.istad.ite.features.product.dto.CreateProductRequest;
 import co.istad.ite.features.product.dto.ProductResponse;
+import co.istad.ite.features.product.dto.UpdateProductRequest;
 import co.istad.ite.util.GenerateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -54,22 +54,29 @@ public class ProductServiceImpl implements ProductService {
                 .mapCreateProductRequestToProduct(createProductRequest);
 
 
-        // 4. Set generated system data
+        // Set generated system data
         product.setCategory(category);
         product.setCode(GenerateUtils.generateProductCode());
         product.setSlug(GenerateUtils.generateSlug(createProductRequest.name()));
         product.setIsAvailable(true);
         product.setIsDelete(false);
 
-        // 5. Save product
+        // Save product
         product = productRepository.save(product);
 
         return productMapper.mapProductToProductResponse(product);
     }
 
     @Override
-    public ProductResponse updateProductRequest(String name, String description, BigDecimal unitPrice) {
+    public ProductResponse updateProduct(Long id, UpdateProductRequest updateProductRequest) {
+       Product product = productRepository.findById(Math.toIntExact(id))
+               .orElseThrow(() -> new RuntimeException("Product is not found with id:" + id));
+       product.setName(updateProductRequest.name());
+       product.setDescription(updateProductRequest.description());
+       product.setCategory(product.getCategory());
 
-        return null;
+       Product saved = productRepository.save(product);
+       return productMapper.mapProductToProductResponse(saved);
     }
+
 }

@@ -53,7 +53,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         FileUpload fileUpload = new FileUpload();
         fileUpload.setName(name);
-        fileUpload.setCaption("File Upload");
+        fileUpload.setCaption("File Response for Upload");
         fileUpload.setExtension(ext);
         fileUpload.setSize(file.getSize());
         fileUpload.setMediaType(file.getContentType());
@@ -119,11 +119,11 @@ public class FileUploadServiceImpl implements FileUploadService {
 
         Sort sortById = Sort.by(Sort.Direction.DESC, "id");
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sortById);
-        Page<FileUpload> fileUplaodResponse = fileUploadRepository.findAll(pageRequest);
+        Page<FileUpload> fileUploadResponse = fileUploadRepository.findAll(pageRequest);
 
-        return fileUplaodResponse.map(fileUploadMapper::mapFileUploadToFileUploadResponse);
+        return fileUploadResponse.map(fileUploadMapper::mapFileUploadToFileUploadResponse);
     }
-
+  
 
     @Override
     public FileDeleteResponse fileDelete(String fileName) {

@@ -1,4 +1,4 @@
-package co.istad.ite.features.excption;
+package co.istad.ite.excption;
 
 
 import lombok.Builder;
