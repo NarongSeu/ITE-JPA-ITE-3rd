@@ -10,16 +10,30 @@ import java.math.BigDecimal;
 
 public record UpdateProductRequest(
 
+        @NotNull(message = "ID is required")
+        Long id,
+
         @NotBlank(message = "Name is required")
-        @Size(min = 3,max = 255)
+        @Size(min = 3, max = 255)
         String name,
 
         @NotBlank(message = "Description is required")
-        @Size(min = 3,max = 10000)
+        @Size(min = 3, max = 10000)
         String description,
 
+        @NotBlank(message = "Thumbnail is required")
+        String thumbnail,
+
         @NotNull(message = "Price is required")
-        @Positive(message = "Price must to be Positive")
-        BigDecimal unitPrice
+        @Positive(message = "Price must be Positive")
+        BigDecimal unitPrice,
+
+        @NotNull(message = "Quantity is required")
+        @Positive(message = "Quantity must be Positive")
+        Integer qty,
+
+        @NotNull(message = "Category ID is required")
+        @Positive(message = "Category ID must be Positive")
+        Long categoryId
 ) {
 }

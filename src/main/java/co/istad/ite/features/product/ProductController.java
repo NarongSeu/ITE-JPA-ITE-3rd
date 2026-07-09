@@ -2,6 +2,7 @@ package co.istad.ite.features.product;
 
 import co.istad.ite.features.product.dto.CreateProductRequest;
 import co.istad.ite.features.product.dto.ProductResponse;
+import co.istad.ite.features.product.dto.UpdateProductRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,14 @@ public class ProductController {
     @PostMapping
     public ProductResponse createNew(@Valid @RequestBody CreateProductRequest createProductRequest) {
         return productService.createNew(createProductRequest);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
+    public ProductResponse update(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateProductRequest updateProductRequest) {
+        return productService.updateProduct(id, updateProductRequest);
     }
 
 }
